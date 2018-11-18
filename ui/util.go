@@ -50,16 +50,19 @@ func readKey(window *glfw.Window, key glfw.Key) bool {
 	return window.GetKey(key) == glfw.Press
 }
 
+func filterDoubleTrueValues(val1 bool, val2 bool) (bool, bool) {
+	return val1 && (val1 != val2), val2 && (val1 != val2)
+}
+
 func readKeys(window *glfw.Window, turbo bool) [8]bool {
 	var result [8]bool
 	result[nes.ButtonA] = readKey(window, glfw.KeyPageDown) || (turbo && readKey(window, glfw.KeyPageUp))
 	result[nes.ButtonB] = readKey(window, glfw.KeyEnd) || (turbo && readKey(window, glfw.KeyHome))
 	result[nes.ButtonSelect] = readKey(window, glfw.KeyC)
 	result[nes.ButtonStart] = readKey(window, glfw.KeySpace)
-	result[nes.ButtonUp] = readKey(window, glfw.KeyW)
-	result[nes.ButtonDown] = readKey(window, glfw.KeyS))
-	result[nes.ButtonLeft] = readKey(window, glfw.KeyA)
-	result[nes.ButtonRight] = readKey(window, glfw.KeyD))
+
+	result[nes.ButtonUp], result[nes.ButtonDown] = filterDoubleTrueValues(readKey(window, glfw.KeyW), readKey(window, glfw.KeyS))
+	result[nes.ButtonLeft], result[nes.ButtonRight] = filterDoubleTrueValues(readKey(window, glfw.KeyA), readKey(window, glfw.KeyD))
 
 	return result
 }
