@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/fogleman/nes/ui"
+	"github.com/bmv0/nes/ui"
 )
 
 func main() {
