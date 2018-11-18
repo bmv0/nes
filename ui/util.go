@@ -52,14 +52,15 @@ func readKey(window *glfw.Window, key glfw.Key) bool {
 
 func readKeys(window *glfw.Window, turbo bool) [8]bool {
 	var result [8]bool
-	result[nes.ButtonA] = readKey(window, glfw.KeyZ) || (turbo && readKey(window, glfw.KeyA))
-	result[nes.ButtonB] = readKey(window, glfw.KeyX) || (turbo && readKey(window, glfw.KeyS))
-	result[nes.ButtonSelect] = readKey(window, glfw.KeyRightShift)
-	result[nes.ButtonStart] = readKey(window, glfw.KeyEnter)
-	result[nes.ButtonUp] = readKey(window, glfw.KeyUp)
-	result[nes.ButtonDown] = readKey(window, glfw.KeyDown)
-	result[nes.ButtonLeft] = readKey(window, glfw.KeyLeft)
-	result[nes.ButtonRight] = readKey(window, glfw.KeyRight)
+	result[nes.ButtonA] = readKey(window, glfw.KeyPageDown) || (turbo && readKey(window, glfw.KeyPageUp))
+	result[nes.ButtonB] = readKey(window, glfw.KeyEnd) || (turbo && readKey(window, glfw.KeyHome))
+	result[nes.ButtonSelect] = readKey(window, glfw.KeyC)
+	result[nes.ButtonStart] = readKey(window, glfw.KeySpace)
+	result[nes.ButtonUp] = readKey(window, glfw.KeyW)
+	result[nes.ButtonDown] = readKey(window, glfw.KeyS))
+	result[nes.ButtonLeft] = readKey(window, glfw.KeyA)
+	result[nes.ButtonRight] = readKey(window, glfw.KeyD))
+
 	return result
 }
 

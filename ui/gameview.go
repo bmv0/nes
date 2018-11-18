@@ -89,7 +89,7 @@ func (view *GameView) onKey(window *glfw.Window,
 	key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 	if action == glfw.Press {
 		switch key {
-		case glfw.KeySpace:
+		case glfw.KeyP:
 			screenshot(view.console.Buffer())
 		case glfw.KeyR:
 			view.console.Reset()
