@@ -56,8 +56,8 @@ func filterDoubleTrueValues(val1 bool, val2 bool) (bool, bool) {
 
 func readKeys(window *glfw.Window, turbo bool) [8]bool {
 	var result [8]bool
-	result[nes.ButtonA] = readKey(window, glfw.KeyPageDown) || (turbo && readKey(window, glfw.KeyPageUp))
-	result[nes.ButtonB] = readKey(window, glfw.KeyEnd) || (turbo && readKey(window, glfw.KeyHome))
+	result[nes.ButtonA] = readKey(window, glfw.KeyKP3) || (turbo && readKey(window, glfw.KeyKP6))
+	result[nes.ButtonB] = readKey(window, glfw.KeyKP2) || (turbo && readKey(window, glfw.KeyKP5))
 	result[nes.ButtonSelect] = readKey(window, glfw.KeyC)
 	result[nes.ButtonStart] = readKey(window, glfw.KeySpace)
 
