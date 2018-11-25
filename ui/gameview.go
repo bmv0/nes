@@ -13,6 +13,7 @@ const padding = 0
 type GameView struct {
 	director *Director
 	console  *nes.Console
+	volume   *VolumeController
 	title    string
 	hash     string
 	texture  uint32
@@ -22,7 +23,8 @@ type GameView struct {
 
 func NewGameView(director *Director, console *nes.Console, title, hash string) View {
 	texture := createTexture()
-	return &GameView{director, console, title, hash, texture, false, nil}
+	volume := NewVolumeController(director.audio)
+	return &GameView{director, console, volume, title, hash, texture, false, nil}
 }
 
 func (view *GameView) Enter() {
@@ -101,6 +103,17 @@ func (view *GameView) onKey(window *glfw.Window,
 			} else {
 				view.record = true
 			}
+		case glfw.KeyPageUp:
+			view.volume.Up()
+		case glfw.KeyPageDown:
+			view.volume.Down()
+		}
+	} else if action == glfw.Repeat {
+		switch key {
+		case glfw.KeyPageUp:
+			view.volume.Up()
+		case glfw.KeyPageDown:
+			view.volume.Down()
 		}
 	}
 }

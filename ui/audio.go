@@ -7,6 +7,7 @@ type Audio struct {
 	sampleRate     float64
 	outputChannels int
 	channel        chan float32
+	volume         float32
 }
 
 func NewAudio() *Audio {
@@ -38,6 +39,10 @@ func (a *Audio) Stop() error {
 	return a.stream.Close()
 }
 
+func (a *Audio) SetVolume(newVolume float32) {
+	a.volume = newVolume
+}
+
 func (a *Audio) Callback(out []float32) {
 	var output float32
 	for i := range out {
@@ -49,6 +54,6 @@ func (a *Audio) Callback(out []float32) {
 				output = 0
 			}
 		}
-		out[i] = output
+		out[i] = output * a.volume
 	}
 }
