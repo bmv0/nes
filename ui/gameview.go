@@ -13,6 +13,7 @@ const padding = 0
 type GameView struct {
 	director *Director
 	console  *nes.Console
+	settings *Settings
 	volume   *VolumeController
 	title    string
 	hash     string
@@ -23,8 +24,9 @@ type GameView struct {
 
 func NewGameView(director *Director, console *nes.Console, title, hash string) View {
 	texture := createTexture()
-	volume := NewVolumeController(director.audio)
-	return &GameView{director, console, volume, title, hash, texture, false, nil}
+	settings := Settings{}
+	volume := NewVolumeController(director.audio, &settings)
+	return &GameView{director, console, &settings, volume, title, hash, texture, false, nil}
 }
 
 func (view *GameView) Enter() {
@@ -33,6 +35,9 @@ func (view *GameView) Enter() {
 	view.console.SetAudioChannel(view.director.audio.channel)
 	view.console.SetAudioSampleRate(view.director.audio.sampleRate)
 	view.director.window.SetKeyCallback(view.onKey)
+
+	// load settings
+	view.settings.Load()
 	// load state
 	if err := view.console.LoadState(savePath(view.hash)); err == nil {
 		return
@@ -59,6 +64,8 @@ func (view *GameView) Exit() {
 	}
 	// save state
 	view.console.SaveState(savePath(view.hash))
+	// save settings
+	view.settings.Save()
 }
 
 func (view *GameView) Update(t, dt float64) {
