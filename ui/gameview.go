@@ -114,6 +114,13 @@ func (view *GameView) onKey(window *glfw.Window,
 			view.volume.Up()
 		case glfw.KeyPageDown:
 			view.volume.Down()
+		case glfw.Key0, glfw.Key1, glfw.Key2, glfw.Key3, glfw.Key4, glfw.Key5, glfw.Key6, glfw.Key7, glfw.Key8, glfw.Key9:
+			keyNum := int(key) - int(glfw.Key0)
+			if mods&glfw.ModAlt != 0 {
+				view.console.SaveState(statePath(view.hash, keyNum))
+			} else {
+				view.console.LoadState(statePath(view.hash, keyNum))
+			}
 		}
 	} else if action == glfw.Repeat {
 		switch key {

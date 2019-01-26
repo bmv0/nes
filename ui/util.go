@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"strconv"
 
 	"github.com/bmv0/nes/nes"
 	"github.com/go-gl/gl/v2.1/gl"
@@ -44,6 +45,10 @@ func sramPath(hash string) string {
 
 func savePath(hash string) string {
 	return homeDir + "/.nes/save/" + hash + ".dat"
+}
+
+func statePath(hash string, state int) string {
+	return homeDir + "/.nes/save/" + hash + "_" + strconv.Itoa(state) + ".dat"
 }
 
 func settingsPath() string {
