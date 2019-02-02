@@ -92,6 +92,9 @@ func (view *GameView) Update(t, dt float64) {
 	if view.record {
 		view.frames = append(view.frames, copyImage(console.Buffer()))
 	}
+
+	view.volume.Update(dt)
+	view.volume.Draw(0.65, -0.95, 0.3, 0.05)
 }
 
 func (view *GameView) onKey(window *glfw.Window,
