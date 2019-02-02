@@ -24,6 +24,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
+// Run - initialize and run main loop
 func Run(paths []string) {
 	// initialize audio
 	portaudio.Initialize()

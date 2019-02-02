@@ -17,6 +17,7 @@ const (
 	typeDelay    = 0.5
 )
 
+// MenuView - show interface for a game selection
 type MenuView struct {
 	director     *Director
 	paths        []string
@@ -30,6 +31,7 @@ type MenuView struct {
 	typeTime     float64
 }
 
+// NewMenuView - create a new MenuView object
 func NewMenuView(director *Director, paths []string) View {
 	view := MenuView{}
 	view.director = director
@@ -113,16 +115,19 @@ func (view *MenuView) highlight(index int) {
 	view.j = (index-view.i)/view.nx - view.scroll
 }
 
+// Enter - called before switching to a MenuView
 func (view *MenuView) Enter() {
 	gl.ClearColor(0.333, 0.333, 0.333, 1)
 	view.director.SetTitle("Select Game")
 	view.director.window.SetCharCallback(view.onChar)
 }
 
+// Exit - called before switching to other view
 func (view *MenuView) Exit() {
 	view.director.window.SetCharCallback(nil)
 }
 
+// Update - update and draw a menu
 func (view *MenuView) Update(t, dt float64) {
 	view.checkButtons()
 	view.texture.Purge()

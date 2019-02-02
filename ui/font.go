@@ -30,15 +30,16 @@ func init() {
 	fontMask = mask
 }
 
+// CreateGenericThumbnail - create text-only thumbnail
 func CreateGenericThumbnail(text string) image.Image {
 	im := image.NewRGBA(image.Rect(0, 0, 256, 240))
 	draw.Draw(im, im.Rect, &image.Uniform{color.Black}, image.ZP, draw.Src)
-	DrawCenteredText(im, text, 1, 2, color.RGBA{128, 128, 128, 255})
-	DrawCenteredText(im, text, 0, 0, color.White)
+	drawCenteredText(im, text, 1, 2, color.RGBA{128, 128, 128, 255})
+	drawCenteredText(im, text, 0, 0, color.White)
 	return im
 }
 
-func WordWrap(text string, maxLength int) []string {
+func wordWrap(text string, maxLength int) []string {
 	var rows []string
 	words := strings.Fields(text)
 	if len(words) == 0 {
@@ -58,16 +59,16 @@ func WordWrap(text string, maxLength int) []string {
 	return rows
 }
 
-func DrawCenteredText(dst draw.Image, text string, dx, dy int, c color.Color) {
-	rows := WordWrap(text, 15)
+func drawCenteredText(dst draw.Image, text string, dx, dy int, c color.Color) {
+	rows := wordWrap(text, 15)
 	for i, row := range rows {
 		x := 128 - len(row)*8
 		y := 120 - len(rows)*12 + i*24
-		DrawText(dst, x+dx, y+dy, row, c)
+		drawText(dst, x+dx, y+dy, row, c)
 	}
 }
 
-func DrawCharacter(dst draw.Image, x, y int, ch byte, c color.Color) {
+func drawCharacter(dst draw.Image, x, y int, ch byte, c color.Color) {
 	if ch < 32 || ch > 128 {
 		return
 	}
@@ -79,9 +80,9 @@ func DrawCharacter(dst draw.Image, x, y int, ch byte, c color.Color) {
 	draw.DrawMask(dst, r, src, sp, fontMask, sp, draw.Over)
 }
 
-func DrawText(dst draw.Image, x, y int, text string, c color.Color) {
+func drawText(dst draw.Image, x, y int, text string, c color.Color) {
 	for i := range text {
-		DrawCharacter(dst, x, y, text[i], c)
+		drawCharacter(dst, x, y, text[i], c)
 		x += 16
 	}
 }

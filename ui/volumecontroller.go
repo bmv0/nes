@@ -6,15 +6,20 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+// VolumeController - manages a volume level (with indication)
 type VolumeController struct {
 	audio     *Audio
 	level     uint8
 	hideTimer float64
 }
 
+// Minimal and maximal volume level
 const (
-	MinVolumeLevel  = 0
-	MaxVolumeLevel  = 100
+	MinVolumeLevel = 0
+	MaxVolumeLevel = 100
+)
+
+const (
 	defaultHideTime = 1
 	defaultHideA    = 0.1
 	defaultHideB    = 0.9
@@ -48,21 +53,25 @@ func alphaFunc(t float64) float64 {
 	return 1.0
 }
 
+// NewVolumeController - creates a VolumeController object
 func NewVolumeController(audio *Audio, settings *Settings) *VolumeController {
 	volume := VolumeController{audio, MaxVolumeLevel, 0}
 	settings.Register(&volume)
 	return &volume
 }
 
+// Load - load a volume level from settings
 func (volume *VolumeController) Load(settings *Settings) {
 	volume.level = settings.VolumeLevel
 	volume.apply()
 }
 
+// Save - save volume level to settings
 func (volume *VolumeController) Save(settings *Settings) {
 	settings.VolumeLevel = volume.level
 }
 
+// Up - try to raise a volume level
 func (volume *VolumeController) Up() {
 	if volume.level < MaxVolumeLevel {
 		volume.level += 10
@@ -71,6 +80,7 @@ func (volume *VolumeController) Up() {
 	volume.runHideTimer()
 }
 
+// Down - try to lower a volume level
 func (volume *VolumeController) Down() {
 	if volume.level > MinVolumeLevel {
 		volume.level -= 10
@@ -107,6 +117,7 @@ func (volume *VolumeController) apply() {
 	volume.audio.SetVolume(normedLevel * normedLevel)
 }
 
+// Draw - draw visual volume level indication
 func (volume *VolumeController) Draw(x float32, y float32, w float32, h float32) {
 	if volume.hideTimer <= 0 {
 		return
@@ -128,6 +139,7 @@ func (volume *VolumeController) Draw(x float32, y float32, w float32, h float32)
 	setBlend(false)
 }
 
+// Update - update visual volume level indication
 func (volume *VolumeController) Update(dt float64) {
 	if volume.hideTimer > 0 {
 		volume.hideTimer -= dt

@@ -15,6 +15,7 @@ const textureSize = 4096
 const textureDim = textureSize / 256
 const textureCount = textureDim * textureDim
 
+// Texture - manages thumbnails for games in the specified folder
 type Texture struct {
 	texture uint32
 	lookup  map[string]int
@@ -24,6 +25,7 @@ type Texture struct {
 	ch      chan string
 }
 
+// NewTexture - create a new Texture object
 func NewTexture() *Texture {
 	texture := createTexture()
 	gl.BindTexture(gl.TEXTURE_2D, texture)
@@ -39,6 +41,7 @@ func NewTexture() *Texture {
 	return &t
 }
 
+// Purge - clear lookup cache
 func (t *Texture) Purge() {
 	for {
 		select {
@@ -50,20 +53,22 @@ func (t *Texture) Purge() {
 	}
 }
 
+// Bind - bind internal GL texture object to a GL device
 func (t *Texture) Bind() {
 	gl.BindTexture(gl.TEXTURE_2D, t.texture)
 }
 
+// Unbind - unbind internal GL texture object from a GL device
 func (t *Texture) Unbind() {
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 }
 
+// Lookup - finds a region in the Texture for a specified path
 func (t *Texture) Lookup(path string) (x, y, dx, dy float32) {
 	if index, ok := t.lookup[path]; ok {
 		return t.coord(index)
-	} else {
-		return t.coord(t.load(path))
 	}
+	return t.coord(t.load(path))
 }
 
 func (t *Texture) mark(index int) {
@@ -121,13 +126,13 @@ func (t *Texture) loadThumbnail(romPath string) image.Image {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		go t.downloadThumbnail(romPath, hash)
 		return im
-	} else {
-		thumbnail, err := loadPNG(filename)
-		if err != nil {
-			return im
-		}
-		return thumbnail
 	}
+
+	thumbnail, err := loadPNG(filename)
+	if err != nil {
+		return im
+	}
+	return thumbnail
 }
 
 func (t *Texture) downloadThumbnail(romPath, hash string) error {

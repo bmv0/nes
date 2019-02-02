@@ -6,21 +6,25 @@ import (
 	"path"
 )
 
+// Setting - interface type for one setting of the application
 type Setting interface {
 	Load(settings *Settings)
 	Save(settings *Settings)
 }
 
+// Settings - manages all settings of the application
 type Settings struct {
 	VolumeLevel uint8
 	settingList []Setting
 }
 
+// NewSettings - create a new Settings object
 func NewSettings() *Settings {
 	settings := Settings{}
 	return &settings
 }
 
+// Load - load settings from a file
 func (settings *Settings) Load() {
 	filename := settingsPath()
 	file, err := os.Open(filename)
@@ -39,6 +43,7 @@ func (settings *Settings) Load() {
 	}
 }
 
+// Save - save settings to a file
 func (settings *Settings) Save() error {
 	for _, v := range settings.settingList {
 		v.Save(settings)
@@ -58,6 +63,7 @@ func (settings *Settings) Save() error {
 	return encoder.Encode(settings)
 }
 
+// Register - add a new setting object to the list
 func (settings *Settings) Register(setting Setting) {
 	for _, v := range settings.settingList {
 		if v == setting {
@@ -67,6 +73,7 @@ func (settings *Settings) Register(setting Setting) {
 	settings.settingList = append(settings.settingList, setting)
 }
 
+// Unregister - removes a setting object from the list
 func (settings *Settings) Unregister(setting Setting) {
 	for i, v := range settings.settingList {
 		if v == setting {

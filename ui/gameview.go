@@ -10,6 +10,7 @@ import (
 
 const padding = 0
 
+// GameView - manages all game related stuff (emulator, volume level, settings etc.)
 type GameView struct {
 	director *Director
 	console  *nes.Console
@@ -22,6 +23,7 @@ type GameView struct {
 	frames   []image.Image
 }
 
+// NewGameView - create new GameView object
 func NewGameView(director *Director, console *nes.Console, title, hash string) View {
 	texture := createTexture()
 	settings := Settings{}
@@ -29,6 +31,7 @@ func NewGameView(director *Director, console *nes.Console, title, hash string) V
 	return &GameView{director, console, &settings, volume, title, hash, texture, false, nil}
 }
 
+// Enter - called before switching to a GameView
 func (view *GameView) Enter() {
 	gl.ClearColor(0, 0, 0, 1)
 	view.director.SetTitle(view.title)
@@ -41,9 +44,10 @@ func (view *GameView) Enter() {
 	// load state
 	if err := view.console.LoadState(savePath(view.hash)); err == nil {
 		return
-	} else {
-		view.console.Reset()
 	}
+
+	view.console.Reset()
+
 	// load sram
 	cartridge := view.console.Cartridge
 	if cartridge.Battery != 0 {
@@ -53,6 +57,7 @@ func (view *GameView) Enter() {
 	}
 }
 
+// Exit - called before switching to other view
 func (view *GameView) Exit() {
 	view.director.window.SetKeyCallback(nil)
 	view.console.SetAudioChannel(nil)
@@ -68,6 +73,7 @@ func (view *GameView) Exit() {
 	view.settings.Save()
 }
 
+// Update - update and draw a game state
 func (view *GameView) Update(t, dt float64) {
 	if dt > 1 {
 		dt = 0

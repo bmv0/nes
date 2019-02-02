@@ -2,6 +2,7 @@ package ui
 
 import "github.com/gordonklaus/portaudio"
 
+// Audio - manages game audio
 type Audio struct {
 	stream         *portaudio.Stream
 	sampleRate     float64
@@ -10,19 +11,21 @@ type Audio struct {
 	volume         float32
 }
 
+// NewAudio - create new Audio object
 func NewAudio() *Audio {
 	a := Audio{}
 	a.channel = make(chan float32, 44100)
 	return &a
 }
 
+// Start - begin audio playing
 func (a *Audio) Start() error {
 	host, err := portaudio.DefaultHostApi()
 	if err != nil {
 		return err
 	}
 	parameters := portaudio.HighLatencyParameters(nil, host.DefaultOutputDevice)
-	stream, err := portaudio.OpenStream(parameters, a.Callback)
+	stream, err := portaudio.OpenStream(parameters, a.callback)
 	if err != nil {
 		return err
 	}
@@ -35,15 +38,17 @@ func (a *Audio) Start() error {
 	return nil
 }
 
+// Stop - end audio playing
 func (a *Audio) Stop() error {
 	return a.stream.Close()
 }
 
+// SetVolume - set new volume level
 func (a *Audio) SetVolume(newVolume float32) {
 	a.volume = newVolume
 }
 
-func (a *Audio) Callback(out []float32) {
+func (a *Audio) callback(out []float32) {
 	var output float32
 	for i := range out {
 		if i%a.outputChannels == 0 {
