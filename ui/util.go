@@ -247,3 +247,7 @@ func readSRAM(filename string) ([]byte, error) {
 	}
 	return sram, nil
 }
+
+func isWindowActive(window *glfw.Window) bool {
+	return window.GetAttrib(glfw.Focused) > 0
+}

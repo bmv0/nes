@@ -21,6 +21,7 @@ type GameView struct {
 	texture  uint32
 	record   bool
 	frames   []image.Image
+	active   bool
 }
 
 // NewGameView - create new GameView object
@@ -28,7 +29,7 @@ func NewGameView(director *Director, console *nes.Console, title, hash string) V
 	texture := createTexture()
 	settings := Settings{}
 	volume := NewVolumeController(director.audio, &settings)
-	return &GameView{director, console, &settings, volume, title, hash, texture, false, nil}
+	return &GameView{director, console, &settings, volume, title, hash, texture, false, nil, false}
 }
 
 // Enter - called before switching to a GameView
@@ -37,7 +38,11 @@ func (view *GameView) Enter() {
 	view.director.SetTitle(view.title)
 	view.console.SetAudioChannel(view.director.audio.channel)
 	view.console.SetAudioSampleRate(view.director.audio.sampleRate)
-	view.director.window.SetKeyCallback(view.onKey)
+
+	window := view.director.window
+	window.SetKeyCallback(view.onKey)
+	window.SetFocusCallback(view.onFocus)
+	view.active = isWindowActive(window)
 
 	// load settings
 	view.settings.Load()
@@ -59,7 +64,10 @@ func (view *GameView) Enter() {
 
 // Exit - called before switching to other view
 func (view *GameView) Exit() {
-	view.director.window.SetKeyCallback(nil)
+	window := view.director.window
+	view.active = false
+	window.SetKeyCallback(nil)
+	window.SetFocusCallback(nil)
 	view.console.SetAudioChannel(nil)
 	view.console.SetAudioSampleRate(0)
 	// save sram
@@ -80,17 +88,21 @@ func (view *GameView) Update(t, dt float64) {
 	}
 	window := view.director.window
 	console := view.console
-	if joystickReset(glfw.Joystick1) {
-		view.director.ShowMenu()
+
+	if view.active {
+		if joystickReset(glfw.Joystick1) {
+			view.director.ShowMenu()
+		}
+		if joystickReset(glfw.Joystick2) {
+			view.director.ShowMenu()
+		}
+		if readKey(window, glfw.KeyEscape) {
+			view.director.ShowMenu()
+		}
+		updateControllers(window, console)
+		console.StepSeconds(dt)
 	}
-	if joystickReset(glfw.Joystick2) {
-		view.director.ShowMenu()
-	}
-	if readKey(window, glfw.KeyEscape) {
-		view.director.ShowMenu()
-	}
-	updateControllers(window, console)
-	console.StepSeconds(dt)
+
 	gl.BindTexture(gl.TEXTURE_2D, view.texture)
 	setTexture(console.Buffer())
 	drawBuffer(view.director.window)
@@ -101,6 +113,10 @@ func (view *GameView) Update(t, dt float64) {
 
 	view.volume.Update(dt)
 	view.volume.Draw(0.65, -0.95, 0.3, 0.05)
+}
+
+func (view *GameView) onFocus(window *glfw.Window, focused bool) {
+	view.active = focused
 }
 
 func (view *GameView) onKey(window *glfw.Window,
