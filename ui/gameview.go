@@ -29,7 +29,8 @@ func NewGameView(director *Director, console *nes.Console, title, hash string) V
 	texture := createTexture()
 	settings := Settings{}
 	volume := NewVolumeController(director.audio, &settings)
-	return &GameView{director, console, &settings, volume, title, hash, texture, false, nil, false}
+	newTitle := title + "  /  Save Alt+[0-9]  /  Load [0-9]"
+	return &GameView{director, console, &settings, volume, newTitle, hash, texture, false, nil, false}
 }
 
 // Enter - called before switching to a GameView
@@ -141,9 +142,9 @@ func (view *GameView) onKey(window *glfw.Window,
 			view.volume.Down()
 		case glfw.Key0, glfw.Key1, glfw.Key2, glfw.Key3, glfw.Key4, glfw.Key5, glfw.Key6, glfw.Key7, glfw.Key8, glfw.Key9:
 			keyNum := int(key) - int(glfw.Key0)
-			if mods&glfw.ModAlt != 0 {
+			if mods == glfw.ModAlt {
 				view.console.SaveState(statePath(view.hash, keyNum))
-			} else {
+			} else if mods == 0 {
 				view.console.LoadState(statePath(view.hash, keyNum))
 			}
 		}
